@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { ThemeContext } from 'styled-components/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Channel, ChannelCreation } from '../screens'
+import MainTab from './MainTab';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,7 @@ const MainStack = () => {
                 headerBackTitleVisible: false
             }}
         >
+            <Stack.Screen name="Main" component={MainTab} />
             <Stack.Screen name="Channel Creation" component={ChannelCreation} />
             <Stack.Screen name="Channel" component={Channel} />
         </Stack.Navigator>
