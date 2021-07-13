@@ -1,20 +1,29 @@
-import React, { useContext } from 'react';
-import { Text, View } from 'react-native';
-import styled from 'styled-components/native'
-import { Button } from '../components';
-import { UserContext } from '../contexts';
-import { logout } from '../utils/firebase'
+import React, { useContext, useState } from 'react';
+import { Alert } from 'react-native';
+import styled, { ThemeContext } from 'styled-components/native'
+import { Button, Image, Input } from '../components';
+import { logout, getCurrentUser, updateUserPhoto } from '../utils/firebase'
+import { UserContext, ProgressContext } from '../contexts';
 
 const Container = styled.View`
     flex: 1;
     background-color : ${({ theme }) => theme.background};
+    justify-content :center;
+    align-items: center;
+    padding: 0 20px;
 `
 
 const Profile = () => {
     const { dispatch } = useContext(UserContext)
+    const { spinner } = useContext(ProgressContext)
+    const theme = useContext(ThemeContext)
+
+    const user = getCurrentUser();
+    const [photoUrl, setPhotoUrl] = useState(user.photoUrl)
 
     const _handleLogoutButtonPress = async () => {
         try {
+            spinner.start();
             await logout();
         }
         catch (e) {
@@ -22,12 +31,28 @@ const Profile = () => {
         }
         finally {
             dispatch({})
+            spinner.stop();
         }
-
     }
+
+    const _handlePhotoChange = async url => {
+        try {
+            spinner.start();
+            const updatedUser = await updateUserPhoto(url);
+            setPhotoUrl(updatedUser.photoUrl);
+        } catch (e) {
+            Alert.alert('Photo Error', e.message)
+        } finally {
+            spinner.stop();
+        }
+    }
+
     return (
         <Container>
-            <Button title="logout" onPress={_handleLogoutButtonPress} />
+            <Image url={photoUrl} onChangeImage={_handlePhotoChange} showButton rounded />
+            <Input label="Name" value={user.name} disabled />
+            <Input label="Email" value={user.email} disabled />
+            <Button title="logout" onPress={_handleLogoutButtonPress} containerStyle={{ marginTop: 30, backgroundColor: theme.buttonLogout }} />
         </Container>
     );
 }

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Profile, ChannelList } from '../screens'
 import { MaterialIcons } from '@expo/vector-icons'
 import { ThemeContext } from 'styled-components/native'
-
+import { useNavigation, useRoute } from '@react-navigation/native'
 const Tab = createBottomTabNavigator();
 
 const TabBarIcon = ({ focused, name }) => {
@@ -11,8 +11,17 @@ const TabBarIcon = ({ focused, name }) => {
     return (<MaterialIcons name={name} size={26} color={focused ? theme.tabActiveColor : theme.tabInactiveColor} />);
 }
 
-const MainTab = () => {
+const MainTab = ({ }) => {
     const theme = useContext(ThemeContext);
+    const navigation = useNavigation();
+    const route = useRoute();
+
+    useEffect(() => {
+        const titles = route.state?.routeNames || ['Channels'];
+        const index = route.state?.index || 0;
+        navigation.setOptions({ headerTitle: titles[index] })
+    }, [route])
+
     return (
         <Tab.Navigator
             tabBarOptions={{ activeTintColor: theme.tabActiveColor, inactiveTintColor: theme.tabInactiveColor }}
