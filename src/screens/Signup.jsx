@@ -7,7 +7,7 @@ import { removeWhitespace, validateEmail } from '../utils/common';
 import { images } from '../utils/images';
 import { Alert } from 'react-native';
 import { signup } from '../utils/firebase';
-import { ProgressContext } from '../contexts';
+import { ProgressContext, UserContext } from '../contexts';
 const Container = styled.View`
     flex: 1;
     justify-content: center;
@@ -38,6 +38,7 @@ const Signup = ({ params }) => {
     const passwordConfirmRef = useRef();
     const didMountRef = useRef();
     const { spinner } = useContext(ProgressContext);
+    const { dispatch } = useContext(UserContext)
     useEffect(() => {
         if (didMountRef.current) {
             let _errorMessage = '';
@@ -69,6 +70,7 @@ const Signup = ({ params }) => {
         try {
             spinner.start();
             const user = await signup({ email, password, name, photoUrl });
+            dispatch(user);
             Alert.alert('Signup Success', user.email);
         } catch (e) {
             Alert.alert('Signup Error', e.message);

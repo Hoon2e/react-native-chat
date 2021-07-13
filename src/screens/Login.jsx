@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
 import { login } from '../utils/firebase';
-import { ProgressContext } from '../contexts';
+import { ProgressContext, UserContext } from '../contexts';
 const ErrorText = styled.Text`
     align-items: flex-start;
     width: 100%;
@@ -39,7 +39,7 @@ const Login = () => {
     const [disabled, setDisabled] = useState(true);
     const insets = useSafeAreaInsets();
     const { spinner } = useContext(ProgressContext);
-
+    const { dispatch } = useContext(UserContext)
     useEffect(() => {
         setDisabled(!(email && password && !errorMessage));
     }, [email, password, errorMessage]);
@@ -60,6 +60,7 @@ const Login = () => {
         try {
             spinner.start();
             const user = await login({ email, password });
+            dispatch(user, user);
             Alert.alert('Login Success', user.email);
         } catch (e) {
             Alert.alert('Logint Error', e.message);

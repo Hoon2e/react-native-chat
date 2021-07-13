@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Text, View } from 'react-native';
 import styled from 'styled-components/native'
+import { Button } from '../components';
+import { UserContext } from '../contexts';
+import { logout } from '../utils/firebase'
 
 const Container = styled.View`
     flex: 1;
@@ -8,9 +11,23 @@ const Container = styled.View`
 `
 
 const Profile = () => {
+    const { dispatch } = useContext(UserContext)
+
+    const _handleLogoutButtonPress = async () => {
+        try {
+            await logout();
+        }
+        catch (e) {
+            console.log('[Profile] logout: ', e.message)
+        }
+        finally {
+            dispatch({})
+        }
+
+    }
     return (
         <Container>
-            <Text style={{ fontSize: 24 }}>Profile</Text>
+            <Button title="logout" onPress={_handleLogoutButtonPress} />
         </Container>
     );
 }

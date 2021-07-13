@@ -17,13 +17,13 @@ export const login = async ({ email, password }) => {
 
 export const signup = async ({ email, password, name, photoUrl }) => {
     const { user } = await Auth.createUserWithEmailAndPassword(email, password);
-    console.log(photoUrl);
     const storageUrl = photoUrl.startsWith('https')
         ? photoUrl
         : await uploadImage(photoUrl);
     await user.updateProfile({ displayName: name, photoURL: storageUrl });
     return user;
 };
+
 
 const uploadImage = async uri => {
     // const blob = await new Promise((resolve, reject) => {
@@ -46,3 +46,8 @@ const uploadImage = async uri => {
     blob.close();
     return await snapshot.ref.getDownloadURL();
 };
+
+export const logout = async () => {
+    return await Auth.signOut();
+}
+
